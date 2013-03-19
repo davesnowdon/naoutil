@@ -55,8 +55,7 @@ import util.i18n as i18n
 # basename "defaults"
 hello_value = i18n.get_property(self.resources_path, "defaults", "en", "hello")
 
-# get a list of strings (options for random text) from the basename
- "defaults"
+# get a list of strings (options for random text) from the basename "defaults"
 # in chinese from the property "attractAttention" separated by "/"
 options = i18n.read_text_options(self.resources_path, "defaults", "zh", "attractAttention", "/")
 
