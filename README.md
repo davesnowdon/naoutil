@@ -22,14 +22,15 @@ The idea behind the random text is that there are often places in a NAO app wher
 
 For example here is what a java properties file might look like:
 
-```hello=Hello
+<pre>
+hello=Hello
 attractAttention=Excuse me!/Oy! You over there!/Hey! I want to talk to you./Human, I wish to talk to you./You will be interrogated! Please!
-```
+</pre>
 
 and here's the same content in JSON format
 
-
-```{
+<pre lang="javascript"><code>
+{
    "hello" : "Hello",
    "attractAttention" : [
        "Excuse me!",
@@ -39,7 +40,7 @@ and here's the same content in JSON format
        "You will be interrogated! Please!"
    ]
 }
-```
+</code></pre>
 
 The code will transparently use JSON or java properties format as long as properties files have a .properties extension and JSON files have a .json extension.
 
@@ -48,7 +49,8 @@ There are two ways to use this code:
 ###1) python
 Look at the unit tests to get a better idea of how this works.
 
-```import util.i18n as i18n
+<pre lang="python"><code>
+import util.i18n as i18n
 # get the value of the property "hello" property in English from the 
 # basename "defaults"
 hello_value = i18n.get_property(self.resources_path, "defaults", "en", "hello")
@@ -60,7 +62,7 @@ options = i18n.read_text_options(self.resources_path, "defaults", "zh", "attract
 
 # read the options from the plain text file with basename "example" in French
 options = i18n.read_text_options(self.resources_path, "example", "fr")
-```
+</code></pre>
 
 ###2) Choreographe boxes</span>
 **Localized Text Property**
@@ -86,7 +88,8 @@ In this project I've combined use of choreographe for the boxes and eclipse/pyde
 ## JSON
 Provides functions to_json() and from_json() that allow arbitrary classes to be converted to/from JSON providing that they implement 2 helper functions. The classes may also need to implement the __eq__function and name if these aren't defined in sub-classes. The two functions below demonstrate this. JsonTestBase is a class with no data but which can be serialised and deserialised so you get back a class of the same type, JsonWithData is a more interesting data-bearing class.
 
-```class JsonTestBase(object):
+<pre lang="python"><code>
+class JsonTestBase(object):
     def __init__(self):
         super(JsonTestBase, self).__init__()
     
@@ -115,6 +118,6 @@ class JsonWithData(JsonTestBase):
     def to_json(self):
         return { 'source' : self.source,
                  'sensorData' : self.sensorData}
-```
+</code></pre>
 
 
