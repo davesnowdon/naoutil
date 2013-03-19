@@ -1,0 +1,16 @@
+{
+   "hello" : "Bonjour",
+   "attractAttention" : [
+       "Excusez moi!",
+       "Oy! Vous là-bas!",
+       "Hey! Je tiens à vous parler.",
+       "Humaine, je tiens à vous parler.",
+       "Vous serez interrogé! S'il vous plaît!"
+   ],
+   "goodbye" : [
+   	   "Je reviens bientot",
+   	   "Au revoir",
+   	   "A bientot",
+   	   "Un jour, nous nous reverrons à nouveau"
+   ]
+}
