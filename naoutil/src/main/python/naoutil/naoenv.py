@@ -20,6 +20,7 @@ RESOURCE_DIR = "resources"
 '''
 Hold information about the NAO environment and provide abstraction for logging
 '''
+# TODO build proxies on demand using python properties with custom getter
 class NaoEnvironment(object):
     def __init__(self, box_, memory_, motion_, tts_):
         super(NaoEnvironment, self).__init__()
@@ -39,9 +40,9 @@ class NaoEnvironment(object):
             this_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
             prefix_end_index = this_dir.rindex(SOURCE_DIR)
             prefix = this_dir[0:prefix_end_index]
-            return prefix + RESOURCE_DIR
-        else:
-            return self.resources_path
+            self.resources_path = prefix + RESOURCE_DIR
+        
+        return self.resources_path
     
     def set_resources_dir(self, dir_name):
         self.resources_path = dir_name
@@ -54,10 +55,13 @@ class NaoEnvironment(object):
         return i18n.language_to_code(self.current_language())
     
     def localized_text(self, basename, property_name):
-        return i18n.get_property(self.resources_dir(), 
-                                 basename, 
-                                 self.current_language_code(), 
-                                 property_name)
+        language_code = self.current_language_code()
+        lt = i18n.get_property(self.resources_dir(), 
+                               basename, 
+                               language_code, 
+                               property_name)
+        self.log("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
+        return lt
 
 '''
 Create environment object.
