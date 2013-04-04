@@ -7,8 +7,8 @@ Created on 1 Apr 2013
 import types
 import unittest
 
-from naoutil.naoenv import make_environment
-from naoutil_tests.mock import MockBox
+from naoutil.naoenv import NaoEnvironment, make_environment
+from naoutil_tests.mock import *
 
 def set_mock_add_proxy(obj, func):
     obj.add_proxy = types.MethodType(func, obj)
@@ -53,6 +53,15 @@ class ProxyManagement(unittest.TestCase):
     
     def test_invalid_name(self):
         self.assertRaises(AttributeError, lambda : self.env.foo)
+
+class EnvironmentInitialization(unittest.TestCase):
+    # test that we can create an environment with some proxies already specified
+    def test_create_environment_with_map(self):
+        env = NaoEnvironment(MockBox(),
+                             { "ALMemory" : MockMemory(), 
+                              "ALMotion" : MockMotion(), 
+                              "ALTextToSpeech" : MockTextToSpeech() })
+        self.assertIsNotNone(env)
 
 if __name__ == '__main__':
     unittest.main()

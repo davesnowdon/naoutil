@@ -58,7 +58,7 @@ class NaoEnvironment(object):
         # construct the set of proxies, ensuring that we use only valid long names
         self.proxies = { }
         longNames = PROXY_SHORT_NAMES.values()
-        for n, v in proxies_:
+        for n, v in proxies_.iteritems():
             if n in longNames:
                 self.proxies[n] = v
             elif n in PROXY_SHORT_NAMES:
