@@ -18,17 +18,51 @@ SOURCE_DIR = "src"
 RESOURCE_DIR = "resources"
 
 '''
+The short names are the ones used to generate python properties, so you can use env.tts instead of
+env.ALTextToSpeech
+'''
+PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
+                      'audioLocalisation' : 'ALAudioSourceLocalisation',
+                      'audioPlayer' : 'ALAudioPlayer',
+                      'audioRecorder' : 'ALAudioRecoder',
+                      'behaviourManager' : 'ALBehaviorManager',
+                      'connectionManager' : 'ALConnectionManager',
+                      'faceDetection' : 'ALFaceDetection',
+                      'infrared' : 'ALInfrared',
+                      'leds' : 'ALLeds',
+                      'memory' : 'ALMemory',
+                      'motion' : 'ALMotion',
+                      'navigation' : 'ALNavigation',
+                      'photoCapture' : 'ALPhotoCapture',
+                      'preferences' : 'ALPreferences',
+                      'resourceManager' : 'ALResourceManager',
+                      'robotPosture' : 'ALRobotPosture',
+                      'sensors' : 'ALSensors',
+                      'sonar' : 'ALSonar',
+                      'soundDetection' : 'ALSoundDetection',
+                      'speechRecognition' : 'ALSpeechRecognition',
+                      'tts' : 'ALTextToSpeech',
+                      'videoDevice' : 'ALVideoDevice',
+                      'videoRecorder' : 'ALVideoRecorder',
+                      'visionRecognition' : 'ALVisionRecognition' }
+
+'''
 Hold information about the NAO environment and provide abstraction for logging
 '''
 # TODO build proxies on demand using python properties with custom getter
 class NaoEnvironment(object):
-    def __init__(self, box_, memory_, motion_, tts_):
+    def __init__(self, box_, proxies_={}):
         super(NaoEnvironment, self).__init__()
         self.box = box_
-        self.memory = memory_
-        self.motion = motion_
-        self.tts = tts_
         self.resources_path = None
+        # construct the set of proxies, ensuring that we use only valid long names
+        self.proxies = { }
+        longNames = PROXY_SHORT_NAMES.values()
+        for n, v in proxies_:
+            if n in longNames:
+                self.proxies[n] = v
+            elif n in PROXY_SHORT_NAMES:
+                self.proxies[PROXY_SHORT_NAMES[n]] = v
     
     def log(self, msg):
         self.box.log(msg)
@@ -63,14 +97,31 @@ class NaoEnvironment(object):
         self.log("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
         return lt
 
+    # simulate having properties for all proxies without having to manually create each one
+    def __getattr__(self, name):
+        if name in PROXY_SHORT_NAMES or name in PROXY_SHORT_NAMES.values():
+            # get the correct long name (key)
+            key = name
+            if name in PROXY_SHORT_NAMES:
+                key = PROXY_SHORT_NAMES[name]
+            
+            if not key in self.proxies:
+                self.add_proxy(key)
+            
+            return self.proxies[key]
+        else:
+            # not a valid short name or long name
+            raise AttributeError
+
+    # invoke ALProxy to create the proxy we need
+    def add_proxy(self, longName):
+        self.log('Creating proxy: ' + longName)
+        self.proxies[longName] = ALProxy(longName)
+
 '''
 Create environment object.
 Needs to be called from a process with an ALBroker running (for example
 within choreographe code)
 '''
 def make_environment(box_):
-    # TODO make proxy handling more general
-    return NaoEnvironment(box_,
-                          ALProxy("ALMemory"), 
-                          ALProxy("ALMotion"), 
-                          ALProxy("ALTextToSpeech"))
+    return NaoEnvironment(box_, {})
