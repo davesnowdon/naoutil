@@ -4,6 +4,8 @@ Created on 4 Apr 2013
 @author: dsnowdon
 '''
 
+from naoutil.naoenv import NaoEnvironment
+
 class MockBox(object):
     def __init__(self):
         super(MockBox, self).__init__()
@@ -36,3 +38,9 @@ class MockTextToSpeech(object):
         super(MockTextToSpeech, self).__init__()
     def getLanguage(self):
         return "English"
+
+def make_mock_environment():
+    return NaoEnvironment(MockBox(),
+                          { "ALMemory" : MockMemory(), 
+                            "ALMotion" : MockMotion(), 
+                            "ALTextToSpeech" : MockTextToSpeech() })
