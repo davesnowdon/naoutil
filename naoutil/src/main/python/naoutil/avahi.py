@@ -73,7 +73,7 @@ def findAllNAOs(ipv6=False):
     server = dbus.Interface( bus.get_object(AVAHI_DBUS_NAME, '/'),
             AVAHI_DBUS_INTERFACE_SERVER)
             
-    protoInet = AVAHI_PROTO_INET6 if ipv6 else AVAHI_PROTO_UNSPEC
+    protoInet = AVAHI_PROTO_INET6 if ipv6 else AVAHI_PROTO_INET
 
     sbrowser = dbus.Interface(bus.get_object(AVAHI_DBUS_NAME,
             server.ServiceBrowserNew(AVAHI_IF_UNSPEC,

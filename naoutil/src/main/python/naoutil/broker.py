@@ -33,7 +33,7 @@ def create(brokerName):
     # TODO: improve handling of the avahi return.
     # TODO: all to specify the robot ip/port.
     # TODO: if nothing works, fallback on nao.local/9559
-    NAO_IP = allNAOs[0]['host_name']
+    NAO_IP = allNAOs[0]['ip_address']
     NAO_PORT = allNAOs[0]['naoqi_port']
     # Information concerning our new python broker
     ThisBrokerIP = getLocalIp(NAO_IP)
