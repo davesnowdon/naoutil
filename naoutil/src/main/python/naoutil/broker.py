@@ -17,7 +17,7 @@ def getLocalIp(destAddr):
     return ip
 
 @contextmanager
-def create(brokerName):
+def create(brokerName, naoIp=None, naoPort=None, brokerIp=None, brokerPort=0):
     '''
     Create a broker with the given name.
     Automatically find out NAO IP and our own IP.
@@ -29,17 +29,41 @@ def create(brokerName):
         raw_input("Press ENTER to terminate the broker")
     # Outside of the with, the broker has been shutdown.    
     '''
-    allNAOs = avahi.findAllNAOs()
-    # TODO: improve handling of the avahi return.
-    # TODO: all to specify the robot ip/port.
-    # TODO: if nothing works, fallback on nao.local/9559
-    NAO_IP = allNAOs[0]['ip_address']
-    NAO_PORT = allNAOs[0]['naoqi_port']
+    # Resolve NAO ip/port
+    if naoIp is None:
+        naoPort = None # Ensure consistency. Do not support specifying only port.
+    else:
+        naoIp = str(naoIp)
+    if naoPort is None:
+        allNaos = avahi.findAllNAOs()
+        if naoIp is not None: # A NAO address is given, but not the port. Find it.
+            for aNao in allNaos:
+                if naoIp in aNao.values():
+                    naoPort = aNao['naoqi_port']
+                    break
+            if naoPort is None: # Can't find it in Avahi results
+                naoPort = 9559 # Try default port
+        else: # Find the most likely NAO
+            for aNao in allNaos:
+                if aNao['local']: # Prefer to connect to the local naoqi if there
+                    naoIp = aNao['ip_address']
+                    naoPort = aNao['naoqi_port']
+                    break
+            if naoIp is None: # No local NAO detected
+                if allNaos: # Try to get the first NAO detected by Avahi
+                    naoIp = allNaos[0]['ip_address']
+                    naoPort = allNaos[0]['naoqi_port']
+                else: # Fallback on nao.local/9559
+                    naoIp = 'nao.local'
+                    naoPort = 9559
+    else:
+        naoPort = int(naoPort)
+                
     # Information concerning our new python broker
-    ThisBrokerIP = getLocalIp(NAO_IP)
-    ThisBrokerPort = 0
+    if brokerIp is None:
+        brokerIp = getLocalIp(naoIp)
   
-    pythonBroker = ALBroker(brokerName, ThisBrokerIP, ThisBrokerPort, NAO_IP, NAO_PORT)
+    pythonBroker = ALBroker(brokerName, brokerIp, brokerPort, naoIp, naoPort)
     
     yield pythonBroker
     
