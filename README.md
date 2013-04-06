@@ -16,7 +16,7 @@ box. It's then possible to get the following functionality
 * the 2-letter ISO code of the current language via current_language_code()
 * localised test strings from property files using the localized_text() method and passing in the base name of the properties file and a key
 
-<pre lang="python"><code>
+<pre lang="python">
 env = make_environment(choreographe_box)
 lc = env.current_language_code()
 env.log("Current language is " + lc)
@@ -25,7 +25,8 @@ env.memory.getData("ALMemory location")
 # defaults, such as defaults_XX.properties or defaults_XX.json where
 # XX is a 2-letter ISO language code and that these files have the key "hello"
 lt  = env.localized_text("defaults", "hello")
-</code></pre>
+</pre>
+
 
 ## i18n
 Choreographe boxes that allow text to be retrieved from files for easier management of i18n issues - main aim is to allow clean separation of code and "user visible" strings or other data that depends on the current language of the robot and so aid in translating NAO applications.
