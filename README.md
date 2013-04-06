@@ -4,6 +4,29 @@ A project containing useful utility code for NAO developers (mostly in
 python). Includes support for i18n and JSON serialisation of arbitrary
 classes
 
+## NaoEnvironment
+NaoEnvironment provides a convenient way to access ALProxy instances
+(ALMemory, ALMotion etc) without having to manually create them. It also
+provides access to logging. The intent is to create an instance by calling
+the make_environment() function passing in a reference to a choreographe
+box. It's then possible to get the following functionality
+* logging, via the log() method
+* the path to the resources dir (assuming that the "resources" dir is at the sa e level as the src dir under which naoutil is located) using the resources_dir() method.
+* the name of the current language using, curent_language()
+* the 2-letter ISO code of the current language via current_language_code()
+* localised test strings from property files using the localized_text() method and passing in the base name of the properties file and a key
+
+<pre lang="python"><code>
+env = make_environment(choreographe_box)
+lc = env.current_language_code()
+env.log("Current language is " + lc)
+env.memory.getData("ALMemory location")
+# this assumes the resources dir contains a properties with a basene of
+# defaults, such as defaults_XX.properties or defaults_XX.json where
+# XX is a 2-letter ISO language code and that these files have the key "hello"
+lt  = env.localized_text("defaults", "hello")
+</code></pre>
+
 ## i18n
 Choreographe boxes that allow text to be retrieved from files for easier management of i18n issues - main aim is to allow clean separation of code and "user visible" strings or other data that depends on the current language of the robot and so aid in translating NAO applications.
 
@@ -85,7 +108,8 @@ The project contains some example uses of these boxes.
 In this project I've combined use of choreographe for the boxes and eclipse/pydev to manage the python code outside of choreographe. The eclipse project is inside the choreographe one and I've followed the maven directory structure so that the main python code is in src/main/python and the unit tests are in src/test/python. You'll need to include at least the src/main dir in your projects for the choreographe boxes to work
 
 ## JSON
-Provides functions to_json() and from_json() that allow arbitrary classes to be converted to/from JSON providing that they implement 2 helper functions. The classes may also need to implement the __eq__function and name if these aren't defined in sub-classes. The two functions below demonstrate this. JsonTestBase is a class with no data but which can be serialised and deserialised so you get back a class of the same type, JsonWithData is a more interesting data-bearing class.
+Provides functions to_json_string(), to_json_file() and from_json_string(),
+from_json_file() that allow arbitrary classes to be converted to/from JSON providing that they implement 2 helper functions. The classes may also need to implement the __eq__function and name if these aren't defined in sub-classes. The two functions below demonstrate this. JsonTestBase is a class with no data but which can be serialised and deserialised so you get back a class of the same type, JsonWithData is a more interesting data-bearing class.
 
 <pre lang="python"><code>
 class JsonTestBase(object):
@@ -117,6 +141,10 @@ class JsonWithData(JsonTestBase):
     def to_json(self):
         return { 'source' : self.source,
                  'sensorData' : self.sensorData}
+
+b = JsonWithData('foo', { 'a': 123, 'b' : 456})
+json = to_json_string(b)
+rev = from_json_string(json)
 </code></pre>
 
 
