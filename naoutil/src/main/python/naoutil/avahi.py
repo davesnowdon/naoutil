@@ -63,7 +63,7 @@ servicesFound = []
 gloop = None
 server = None
 
-def findAllNAOs(proto='IPV4'):
+def findAllNAOs(ipv6=False):
     global nbServicesFound, servicesFound, server, gloop
     nbServicesFound = 0
     servicesFound = []
@@ -73,7 +73,7 @@ def findAllNAOs(proto='IPV4'):
     server = dbus.Interface( bus.get_object(AVAHI_DBUS_NAME, '/'),
             AVAHI_DBUS_INTERFACE_SERVER)
             
-    protoInet = AVAHI_PROTO_INET6 if proto == 'IPV6' else AVAHI_PROTO_INET
+    protoInet = AVAHI_PROTO_INET6 if ipv6 else AVAHI_PROTO_UNSPEC
 
     sbrowser = dbus.Interface(bus.get_object(AVAHI_DBUS_NAME,
             server.ServiceBrowserNew(AVAHI_IF_UNSPEC,
