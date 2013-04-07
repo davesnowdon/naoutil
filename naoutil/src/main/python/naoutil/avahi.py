@@ -54,10 +54,6 @@ def _itemNewCb(interface, protocol, name, stype, domain, flags):
     #print "Found service '%s' type '%s' domain '%s' " % (name, stype, domain)
     nbServicesFound += 1
 
-    if flags & 8:
-        # local service, skip
-        pass
-
     server.ResolveService(interface, protocol, name, stype, 
         domain, AVAHI_PROTO_UNSPEC, dbus.UInt32(0), 
         reply_handler=_serviceResolvedCb, error_handler=_doNothingErrorCb)
