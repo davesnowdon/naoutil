@@ -18,6 +18,5 @@ class ALModule(_ALModule):
         if moduleName is None:
             moduleName = object_to_FQCN(self).replace('.', '_').lstrip('_')
         self.moduleName = str(moduleName)
-        print self.moduleName
         _ALModule.__init__(self, self.moduleName)
         setattr(__main__, self.moduleName, self)
