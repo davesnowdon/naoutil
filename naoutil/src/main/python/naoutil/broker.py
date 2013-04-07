@@ -20,14 +20,15 @@ def getLocalIp(destAddr):
 def create(brokerName, naoIp=None, naoPort=None, brokerIp=None, brokerPort=0):
     '''
     Create a broker with the given name.
-    Automatically find out NAO IP and our own IP.
+    Automatically find out NAO IP. Set the broker to listen only on the IP that is on the same network than NAO.
+    You can specify brokerIp to listen to localhost only (127.0.0.1) or to everybody (0.0.0.0).
     
     It acts as a context manager. Which means, use it with the 'with' statement. Example:
     
     with broker.create('MyBroker') as myBroker:
         print myBroker.getGlobalModuleList()
         raw_input("Press ENTER to terminate the broker")
-    # Outside of the with, the broker has been shutdown.    
+    # Outside of the with, the broker has been shutdown.
     '''
     # Resolve NAO ip/port
     if naoIp is None:
