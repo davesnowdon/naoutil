@@ -63,5 +63,30 @@ class EnvironmentInitialization(unittest.TestCase):
                               "ALTextToSpeech" : MockTextToSpeech() })
         self.assertIsNotNone(env)
 
+class NonLocalizedProperties(unittest.TestCase):
+    def setUp(self):
+        unittest.TestCase.setUp(self)
+        self.env = make_environment_with_fake_proxy(fake_add_proxy)
+    
+    # uses config1.properties in resources
+    # note that we don't need to specify the extension NaoEnvironment should find the file
+    def test_property_from_properties_file(self):
+        self.assertEqual("Land of foo", 
+                         self.env.get_property("config1", "property1"))
+        self.assertEqual("wanderer.wanderer.Executor", 
+                         self.env.get_property("config1", "executorClass"))
+    
+    # uses config2.json in resources
+    # note that we don't need to specify the extension NaoEnvironment should find the file
+    def test_property_from_json_file(self):
+        self.assertEqual("wanderer.wanderer.Executor", 
+                         self.env.get_property("config2", "executorClass"))
+    
+    def test_return_none_on_no_default(self):
+        self.assertIsNone(self.env.get_property("config2", "doesnotexist"))
+    
+    def test_default_value(self):
+        self.assertEqual("wombat", self.env.get_property("config2", "doesnotexist", "wombat"))
+        
 if __name__ == '__main__':
     unittest.main()

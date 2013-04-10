@@ -97,6 +97,24 @@ class NaoEnvironment(object):
         self.log("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
         return lt
 
+    # read the named property from the specified config file. The file extension does not need
+    # to be specified - both java style .properties & .json files will work 
+    def get_property(self, basename, propertyName, defaultValue=None):
+        dir_name = self.resources_dir()
+        for ext in [i18n.EXT_PROPERTIES, i18n.EXT_JSON ]:
+            filename = basename + ext
+            path = dir_name + '/' + filename
+            if os.path.exists(path):
+                try:
+                    props = i18n.read_properties_file(path)
+                    contents = props[propertyName].strip()
+                    return contents.encode("utf-8")
+                except KeyError:
+                    # property was not found
+                    return defaultValue
+        # property file was not found
+        return defaultValue
+
     # simulate having properties for all proxies without having to manually create each one
     def __getattr__(self, name):
         if name in PROXY_SHORT_NAMES or name in PROXY_SHORT_NAMES.values():

@@ -1,0 +1,4 @@
+{
+   "plannerClass" : "wanderer.randomwalk.RandomWalk",
+   "executorClass" : "wanderer.wanderer.Executor"
+}
