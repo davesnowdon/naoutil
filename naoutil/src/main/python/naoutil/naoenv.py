@@ -16,6 +16,7 @@ import i18n
 
 SOURCE_DIR = "src"
 RESOURCE_DIR = "resources"
+DATA_DIR = "data"
 
 '''
 The short names are the ones used to generate python properties, so you can use env.tts instead of
@@ -55,6 +56,7 @@ class NaoEnvironment(object):
         super(NaoEnvironment, self).__init__()
         self.box = box_
         self.resources_path = None
+        self.data_path = None
         # construct the set of proxies, ensuring that we use only valid long names
         self.proxies = { }
         longNames = PROXY_SHORT_NAMES.values()
@@ -67,19 +69,35 @@ class NaoEnvironment(object):
     def log(self, msg):
         self.box.log(msg)
     
+    def _base_dir(self):
+        this_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        prefix_end_index = this_dir.rindex(SOURCE_DIR)
+        return this_dir[0:prefix_end_index]
+
     def resources_dir(self):
         if self.resources_path is None:
             # if a path has not been set explicitly then find this path and replace everything
             # from src downwards with resources
-            this_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-            prefix_end_index = this_dir.rindex(SOURCE_DIR)
-            prefix = this_dir[0:prefix_end_index]
-            self.resources_path = prefix + RESOURCE_DIR
-        
+            self.resources_path = self._base_dir() + RESOURCE_DIR
         return self.resources_path
     
     def set_resources_dir(self, dir_name):
         self.resources_path = dir_name
+
+    def data_dir(self):
+        if self.data_path is None:
+            # if a path has not been set explicitly then find this path and replace everything
+            # from src downwards with resources
+            self.data_path = self._base_dir() + DATA_DIR
+        # since, unlike the resources dir, the data dir is not part of the program it might not
+        # already exist, so we create it if necessary
+        if not os.path.isdir(self.data_path):
+            self.log('Creating data dir: '+self.data_path)
+            os.makedirs(self.data_path)
+        return self.data_path
+    
+    def set_data_dir(self, dir_name):
+        self.data_path = dir_name
     
     def current_language(self):
         return self.tts.getLanguage()
