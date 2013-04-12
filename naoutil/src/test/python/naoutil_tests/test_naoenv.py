@@ -87,6 +87,9 @@ class NonLocalizedProperties(unittest.TestCase):
     
     def test_default_value(self):
         self.assertEqual("wombat", self.env.get_property("config2", "doesnotexist", "wombat"))
+    
+    def test_integer_property_value(self):
+        self.assertEqual(8080, self.env.get_property("config2", "portNumber"))
         
 if __name__ == '__main__':
     unittest.main()
