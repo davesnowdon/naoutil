@@ -125,8 +125,11 @@ class NaoEnvironment(object):
             if os.path.exists(path):
                 try:
                     props = i18n.read_properties_file(path)
-                    contents = props[propertyName].strip()
-                    return contents.encode("utf-8")
+                    contents = props[propertyName]
+                    if isinstance(contents, basestring):
+                        return contents.encode("utf-8").strip()
+                    else:
+                        return contents
                 except KeyError:
                     # property was not found
                     return defaultValue
