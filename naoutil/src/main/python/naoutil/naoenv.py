@@ -16,7 +16,8 @@ import i18n
 
 SOURCE_DIR = "src"
 RESOURCE_DIR = "resources"
-DATA_DIR = "data"
+DEFAULT_DATA_DIR_ROOT = "/home/nao"
+DEFAULT_DATA_DIR_NAME = "data"
 
 '''
 The short names are the ones used to generate python properties, so you can use env.tts instead of
@@ -55,6 +56,7 @@ class NaoEnvironment(object):
     def __init__(self, box_, proxies_={}):
         super(NaoEnvironment, self).__init__()
         self.box = box_
+        self.app_name = None
         self.resources_path = None
         self.data_path = None
         # construct the set of proxies, ensuring that we use only valid long names
@@ -74,6 +76,12 @@ class NaoEnvironment(object):
         prefix_end_index = this_dir.rindex(SOURCE_DIR)
         return this_dir[0:prefix_end_index]
 
+    def application_name(self):
+        return self.app_name
+    
+    def set_application_name(self, name):
+        self.app_name = name
+
     def resources_dir(self):
         if self.resources_path is None:
             # if a path has not been set explicitly then find this path and replace everything
@@ -86,9 +94,10 @@ class NaoEnvironment(object):
 
     def data_dir(self):
         if self.data_path is None:
-            # if a path has not been set explicitly then find this path and replace everything
-            # from src downwards with resources
-            self.data_path = self._base_dir() + DATA_DIR
+            if not self.application_name() is None:
+                self.data_path = DEFAULT_DATA_DIR_ROOT + "/" + self.application_name()
+            else:
+                self.data_path = DEFAULT_DATA_DIR_ROOT + "/" + DEFAULT_DATA_DIR_NAME
         # since, unlike the resources dir, the data dir is not part of the program it might not
         # already exist, so we create it if necessary
         if not os.path.exists(self.data_path):
