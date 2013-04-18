@@ -91,9 +91,12 @@ class NaoEnvironment(object):
             self.data_path = self._base_dir() + DATA_DIR
         # since, unlike the resources dir, the data dir is not part of the program it might not
         # already exist, so we create it if necessary
-        if not os.path.isdir(self.data_path):
+        if not os.path.exists(self.data_path):
             self.log('Creating data dir: '+self.data_path)
-            os.makedirs(self.data_path)
+            try:
+                os.makedirs(self.data_path)
+            except OSError:
+                self.log("Failed to creat dir: "+self.data_path)
         return self.data_path
     
     def set_data_dir(self, dir_name):
