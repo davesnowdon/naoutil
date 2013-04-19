@@ -86,7 +86,7 @@ class NaoEnvironment(object):
         if self.resources_path is None:
             # if a path has not been set explicitly then find this path and replace everything
             # from src downwards with resources
-            self.resources_path = self._base_dir() + RESOURCE_DIR
+            self.resources_path = os.path.join(self._base_dir(), RESOURCE_DIR)
         return self.resources_path
     
     def set_resources_dir(self, dir_name):
@@ -95,9 +95,9 @@ class NaoEnvironment(object):
     def data_dir(self):
         if self.data_path is None:
             if not self.application_name() is None:
-                self.data_path = DEFAULT_DATA_DIR_ROOT + "/" + self.application_name()
+                self.data_path = os.path.join(DEFAULT_DATA_DIR_ROOT, self.application_name())
             else:
-                self.data_path = DEFAULT_DATA_DIR_ROOT + "/" + DEFAULT_DATA_DIR_NAME
+                self.data_path = os.path.join(DEFAULT_DATA_DIR_ROOT, DEFAULT_DATA_DIR_NAME)
         # since, unlike the resources dir, the data dir is not part of the program it might not
         # already exist, so we create it if necessary
         if not os.path.exists(self.data_path):
