@@ -1,3 +1,12 @@
+'''
+Created on April 06, 2013
+
+@author: AxelVoitier
+@license: GNU LGPL v3
+
+Provide helper functions to easilly subscribe to ALMemory events and micro events.
+'''
+
 from naoutil import ALModule
 from naoqi import ALProxy
 

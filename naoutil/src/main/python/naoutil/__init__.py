@@ -1,3 +1,10 @@
+'''
+Created on March 19, 2013
+
+@author: dsnowdon
+@license: GNU LGPL v3
+'''
+
 import __main__
 from naoqi import ALModule as _ALModule
 from naoutil.general import object_to_FQCN
@@ -13,6 +20,9 @@ class ALModule(_ALModule):
     If you need it later on, use self.moduleName.
     
     Just instanciate your module the way you want!
+    
+    @author: AxelVoitier
+    Added on April 6, 2013
     '''
     def __init__(self, moduleName=None):
         if moduleName is None:

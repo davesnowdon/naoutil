@@ -1,5 +1,12 @@
-# Copyright 2013 Axel Voitier
-# All rights reserved (until a FOSS licence is found)
+'''
+Created on April 05, 2013
+
+@author: AxelVoitier
+@license: GNU LGPL v3
+
+Python module to access Avahi through DBus.
+It returns the IP, port and other information about NaoQis available on the local network.
+'''
 
 import dbus, gobject
 from dbus import DBusException

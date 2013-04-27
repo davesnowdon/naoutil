@@ -1,5 +1,12 @@
-# Copyright 2013 Axel Voitier
-# All rights reserved (until a FOSS licence is found)
+'''
+Created on April 05, 2013
+
+@author: AxelVoitier
+@license: GNU LGPL v3
+
+Python module allowing to create a ALBroker as if it was a contextmanager (use with the 'with' statement).
+It will also try to resolve automatically all IPs and ports of NaoQis we could connect to.
+'''
 
 import socket
 from contextlib import contextmanager
