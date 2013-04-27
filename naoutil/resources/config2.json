@@ -1,0 +1,5 @@
+{
+   "plannerClass" : "wanderer.randomwalk.RandomWalk",
+   "executorClass" : "wanderer.wanderer.Executor",
+   "portNumber" : 8080
+}
