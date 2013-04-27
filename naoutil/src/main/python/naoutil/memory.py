@@ -26,7 +26,7 @@ class _SubscriberModule(ALModule):
     def microEventCB(self, dataName, value, message):
         self.dataNameToCallback[dataName](dataName, value, message)
         
-def subscribeToMicroEvent(dataName, callback, cbMessage):
+def subscribeToMicroEvent(dataName, callback, cbMessage=''):
     _SubscriberModule().subscribeToMicroEvent(dataName, callback, cbMessage)
         
 def unsubscribeToMicroEvent(dataName):
