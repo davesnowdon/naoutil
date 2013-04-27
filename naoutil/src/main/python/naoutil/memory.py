@@ -9,16 +9,23 @@ Provide helper functions to easilly subscribe to ALMemory events and micro event
 
 from naoutil import ALModule
 from naoqi import ALProxy
+import weakref
 
+def singleton(cls):
+    instances = weakref.WeakValueDictionary()
+    def getinstance():
+        try:
+            return instances[cls]
+        except KeyError:
+            instance = cls() # Keep a strong ref until it is returned
+            instances[cls] = instance
+            return instance
+    return getinstance
+
+@singleton
 class _SubscriberModule(ALModule):
-    _instance = None
-    
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(_SubscriberModule, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-        
     def __init__(self):
+        print 'init called'
         ALModule.__init__(self)
         self.memory = ALProxy('ALMemory')
         self.dataNameToMicroEventCallback = {}
