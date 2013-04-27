@@ -25,7 +25,6 @@ def singleton(cls):
 @singleton
 class _SubscriberModule(ALModule):
     def __init__(self):
-        print 'init called'
         ALModule.__init__(self)
         self.memory = ALProxy('ALMemory')
         self.dataNameToMicroEventCallback = {}
