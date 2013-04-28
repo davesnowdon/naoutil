@@ -32,17 +32,17 @@ class MyClass(GeneratedClass):
         self.base_path = ALFrameManager.getBehaviorPath(self.behaviorId)
         self.debug("base path = "+self.base_path)
         try:
-            import util.i18n as i18n
+            import naoutil.i18n as i18n
         except:
             import sys
-            sys.path.append(self.base_path+"/src/main/python")  
-            import util.i18n as i18n
-        
-        
+            sys.path.append(self.base_path+"/src/main/python")
+            import naoutil.i18n as i18n
+
+
         self.resource_dir = self.getParameter("resourceDir").strip()
         self.resource_path = self.base_path+"/"+self.resource_dir
         self.debug("resource path = "+self.resource_path)
-        
+
         self.resource_file = self.getParameter("resourceFile").strip()
         self.debug("resource file = "+self.resource_file)
 
@@ -55,15 +55,15 @@ class MyClass(GeneratedClass):
         if 0 == len(self.separator):
             self.separator = None
         self.debug("separator = "+str(self.separator))
-        
+
         try:
-            self.randomText = i18n.read_text_options(self.resource_path,        
-                                                 self.resource_file,                                                
-                                                 self.tts.getLanguage(),                                                
+            self.randomText = i18n.read_text_options(self.resource_path,
+                                                 self.resource_file,
+                                                 self.tts.getLanguage(),
                                                  self.property_name,
                                                  self.separator)
-        except: 
-           self.log("exception")       
+        except:
+           self.log("exception")
         self.debug("randomReplies = "+str(self.randomText))
 
     def onUnload(self):
@@ -76,10 +76,10 @@ class MyClass(GeneratedClass):
     def onInput_onStop(self):
         self.onUnload() #~ it is recommanded to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
         pass
-        
+
     def randomComment(self):
         return choice(self.randomText)
-    
+
     def debug(self, msg):
         if self.DEBUG:
             self.log(msg)]]>
@@ -107,13 +107,13 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.base_path = ALFrameManager.getBehaviorPath(self.behaviorId)
         try:
-            import util.i18n as i18n
+            import naoutil.i18n as i18n
         except:
             import sys
-            sys.path.append(self.base_path+"/src/main/python")  
-            import util.i18n as i18n
-        
-        
+            sys.path.append(self.base_path+"/src/main/python")
+            import naoutil.i18n as i18n
+
+
         self.resource_dir = self.getParameter("resourceDir").strip()
         self.resource_path = self.base_path+"/"+self.resource_dir
         self.resource_file = self.getParameter("resourceFile").strip()
@@ -121,14 +121,14 @@ class MyClass(GeneratedClass):
         self.property_name = self.getParameter("resourceProperty").strip()
         if 0 == len(self.property_name):
             self.property_name = None
-            
-        self.property_value = i18n.get_property(self.resource_path, 
+
+        self.property_value = i18n.get_property(self.resource_path,
                                                 self.resource_file,
                                                 self.tts.getLanguage(),
                                                 self.property_name)
         if self.property_value is None:
             self.property_value = ""
-                                        
+
         self.debug("property: "+self.property_name+" = "+self.property_value+", from "+self.resource_dir+"/"+self.resource_file)
 
     def onUnload(self):
@@ -141,7 +141,7 @@ class MyClass(GeneratedClass):
     def onInput_onStop(self):
         self.onUnload() #~ it is recommanded to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
         pass
-     
+
     def debug(self, msg):
         if self.DEBUG:
             self.log(msg)]]>
@@ -170,7 +170,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -225,7 +225,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -280,7 +280,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -336,17 +336,17 @@ class MyClass(GeneratedClass):
         self.base_path = ALFrameManager.getBehaviorPath(self.behaviorId)
         self.debug("base path = "+self.base_path)
         try:
-            import util.i18n as i18n
+            import naoutil.i18n as i18n
         except:
             import sys
-            sys.path.append(self.base_path+"/src/main/python")  
-            import util.i18n as i18n
-        
-        
+            sys.path.append(self.base_path+"/src/main/python")
+            import naoutil.i18n as i18n
+
+
         self.resource_dir = self.getParameter("resourceDir").strip()
         self.resource_path = self.base_path+"/"+self.resource_dir
         self.debug("resource path = "+self.resource_path)
-        
+
         self.resource_file = self.getParameter("resourceFile").strip()
         self.debug("resource file = "+self.resource_file)
 
@@ -359,10 +359,10 @@ class MyClass(GeneratedClass):
         if 0 == len(self.separator):
             self.separator = None
         self.debug("separator = "+str(self.separator))
-        
-        self.randomText = i18n.read_text_options(self.resource_path,        
-                                                 self.resource_file,                                                
-                                                 self.tts.getLanguage(),                                                
+
+        self.randomText = i18n.read_text_options(self.resource_path,
+                                                 self.resource_file,
+                                                 self.tts.getLanguage(),
                                                  self.property_name,
                                                  self.separator)
         self.debug("randomReplies = "+str(self.randomText))
@@ -377,10 +377,10 @@ class MyClass(GeneratedClass):
     def onInput_onStop(self):
         self.onUnload() #~ it is recommanded to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
         pass
-        
+
     def randomComment(self):
         return choice(self.randomText)
-    
+
     def debug(self, msg):
         if self.DEBUG:
             self.log(msg)]]>
@@ -410,7 +410,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -466,17 +466,17 @@ class MyClass(GeneratedClass):
         self.base_path = ALFrameManager.getBehaviorPath(self.behaviorId)
         self.debug("base path = "+self.base_path)
         try:
-            import util.i18n as i18n
+            import naoutil.i18n as i18n
         except:
             import sys
-            sys.path.append(self.base_path+"/src/main/python")  
-            import util.i18n as i18n
-        
-        
+            sys.path.append(self.base_path+"/src/main/python")
+            import naoutil.i18n as i18n
+
+
         self.resource_dir = self.getParameter("resourceDir").strip()
         self.resource_path = self.base_path+"/"+self.resource_dir
         self.debug("resource path = "+self.resource_path)
-        
+
         self.resource_file = self.getParameter("resourceFile").strip()
         self.debug("resource file = "+self.resource_file)
 
@@ -489,10 +489,10 @@ class MyClass(GeneratedClass):
         if 0 == len(self.separator):
             self.separator = None
         self.debug("separator = "+str(self.separator))
-        
-        self.randomText = i18n.read_text_options(self.resource_path,        
-                                                 self.resource_file,                                                
-                                                 self.tts.getLanguage(),                                                
+
+        self.randomText = i18n.read_text_options(self.resource_path,
+                                                 self.resource_file,
+                                                 self.tts.getLanguage(),
                                                  self.property_name,
                                                  self.separator)
         self.debug("randomReplies = "+str(self.randomText))
@@ -507,10 +507,10 @@ class MyClass(GeneratedClass):
     def onInput_onStop(self):
         self.onUnload() #~ it is recommanded to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
         pass
-        
+
     def randomComment(self):
         return choice(self.randomText)
-    
+
     def debug(self, msg):
         if self.DEBUG:
             self.log(msg)]]>
@@ -574,7 +574,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -713,7 +713,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -852,7 +852,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
@@ -991,7 +991,7 @@ class MyClass(GeneratedClass):
     def onLoad(self):
         self.bIsRunning = False
         self.ids = []
-        
+
     def onUnload(self):
         for id in self.ids:
             try:
