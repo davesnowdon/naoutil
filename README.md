@@ -162,7 +162,7 @@ with broker.create('MyBroker') as myBroker:
 ... # Outside of the with-block the broker is automatically shutdown. Even in case of an exception in your code (which will be raised back to you).
 </code></pre>
 
-Or you can use the Broker class inside the broker module:
+Or you can use the Broker class of the broker module:
 
 <pre lang="python"><code>
 from naoutil import broker
@@ -187,12 +187,32 @@ The detection procedure goes as follow:
 
 * If a naoIp is provided but not a naoPort,
   * If the naoIp correspond to an Avahi entry, get the naoPort.
-  * If there is no NaoQi with this IP address on Avahi, it uses the default port, 9559.
+  * If there is no NaoQi with this IP address on Avahi, it uses the default port, '9559'.
 * If a naoIp is not provided,
-  * If Avahi returns a NaoQi running on locally on the machine, uses it.
+  * If Avahi returns a NaoQi running locally on the machine, uses it.
   * Otherwise, get the first NaoQi Avahi found.
-  * If no NaoQi can be found by Avahi, use the default nao.local IP address and 9559 port.
+  * If no NaoQi can be found by Avahi, use the default 'nao.local' IP address and '9559' port.
 * If no brokerIp is given, try to find the IP of the network card routing to the detected naoIp.
 * If no brokerPort is given, use 0 (let the broker find itself a free port).
 
+## ALModule
+A wrapper around ALModule is provided in the naoutil package. It adds two significant features.
 
+First, you don't need to declare your ALModule in the globals of your script. Neither you need to set the name of this global equal to the module name. This wrapper will do it all for you. Therefore, you can create new ALModule anywhere you want in your code: inside functions, modules, classes, etc.
+
+Second, you don't need to provide a module name. The wrapper will create it for you, based on the fully qualified name of your sub-class.
+
+<pre lang="python"><code>
+from noaoutil import ALModule
+
+class MyModule(ALModule):
+    def __init__(self):
+        ALModule.__init__(self)
+        # Or
+        ALModule.__init__(self, 'moduleName')
+        
+def myFunction()
+    aModule = MyModule()
+    
+myFunction()
+</code></pre>
