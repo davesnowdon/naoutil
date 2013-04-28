@@ -148,4 +148,51 @@ json = to_json_string(b)
 rev = from_json_string(json)
 </code></pre>
 
+## Broker
+Provide an easy-to-create ALBroker. It auto-detects the IP/port of a NaoQi available somewhere on the network. This makes it possible for a developper to distribute behaviours creating their own broker without having to care about providing valid IPs/ports info.
+
+It can be used in two different ways. The first is using the broker.create() method. It returns a context manager. This mean you can use it with a 'with' statement:
+
+<pre lang="python"><code>
+from naoutil import broker
+
+with broker.create('MyBroker') as myBroker:
+    ... # Code running inside the broker.
+
+... # Outside of the with-block the broker is automatically shutdown. Even in case of an exception in your code (which will be raised back to you).
+</code></pre>
+
+Or you can use the Broker class inside the broker module:
+
+<pre lang="python"><code>
+from naoutil import broker
+
+myBroker = broker.Broker('MyBroker')
+... # Code running inside the broker.
+myBroker.shutdown()
+</code></pre>
+
+You can also provide the same parameters the original ALBroker class has, except here they are optional (and named):
+
+* brokerIp: The IP on which the broker will listen. Be careful, listening only on 127.0.0.1 when your broker is not running on the robot will prevent you from subscribing to ALMemory events.
+* brokerPort: 0 let the broker find itself a free port.
+* naoIp: The IP or Bonjour/Avahi address of a NAO robot or a machine running a NaoQi.
+* naoPort: Port used by the NaoQi process.
+
+If you don't provide one of this parameter, it will be auto-detected. This means you could for instance just give naoIp='nao.local'. It will resolve itself the naoPort, brokerIp and brokerPort.
+
+
+The auto-detection algorithm uses Bonjour/Avahi through DBus to find available NaoQis. It should be fine in most cases (ie. having only one robot at home, or running a broker directly on the robot itself).
+The detection procedure goes as follow:
+
+* If a naoIp is provided but not a naoPort,
+  * If the naoIp correspond to an Avahi entry, get the naoPort.
+  * If there is no NaoQi with this IP address on Avahi, it uses the default port, 9559.
+* If a naoIp is not provided,
+  * If Avahi returns a NaoQi running on locally on the machine, uses it.
+  * Otherwise, get the first NaoQi Avahi found.
+  * If no NaoQi can be found by Avahi, use the default nao.local IP address and 9559 port.
+* If no brokerIp is given, try to find the IP of the network card routing to the detected naoIp.
+* If no brokerPort is given, use 0 (let the broker find itself a free port).
+
 
