@@ -216,3 +216,29 @@ def myFunction()
     
 myFunction()
 </code></pre>
+
+## Memory callbacks
+This feature allows you to make callbacks on ALMemory events or micro-events without having to make-up a module for that. You just need to provide the event name and a callback function. The callback function can also be a python lambda.
+
+<pre lang="python"><code>
+from naoutil import memory
+
+# Run inside a behaviour environment (ie. choregraphe box) or inside a self created broker.
+
+def myEventCallback(dataName, value, message):
+    print 'Event', dataName, value, message
+
+memory.subscribeToEvent('RightBumperPressed', myEventCallback)
+raw_input("Press ENTER to stop subscribing to RightBumperPressed\n")
+memory.unsubscribeToEvent('RightBumperPressed')
+</code></pre>
+
+Available methods are:
+
+* Events
+  * subscribeToEvent(dataName, callback)
+  * unsubscribeToEvent(dataname)
+* Micro-events
+  * subscribeToMicroEvent(dataName, callback, cbMessage='')
+  * unsubscribeToMicroEvent(dataName)
+
