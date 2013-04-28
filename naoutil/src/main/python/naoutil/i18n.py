@@ -13,17 +13,27 @@ import json
 # Map language names from TTS to ISO language code
 # ISO language codes from http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes        
 LANGUAGE_MAP = {
-            "chinese" : "zh",
-            "english" : "en",
-            "french" : "fr",
-            "german" : "de",
-            "italian" : "it",
-            "japanese" : "ja",
-            "korean" : "ko",
-            "portuguese" : "pt",
-            "spanish" : "es",
-            "filipino" : "fi"
-}
+                "arabic" : "ar",
+                "brazilian" : "pt",
+                "chinese" : "zh",
+                "czech" : "cs",
+                "dutch" : "nl",
+                "danish" : "da",
+                "english" : "en",
+                "filipino" : "tl",
+                "Finnish" : "fi",
+                "french" : "fr",
+                "german" : "de",
+                "italian" : "it",
+                "japanese" : "ja",
+                "korean" : "ko",
+                "Polish" : "pl",
+                "portuguese" : "pt",
+                "russian" : "ru",
+                "spanish" : "es",
+                "swedish" : "sv",
+                "turkish" : "tr"
+                }
 
 DEFAULT_ENCODING = "utf-8"
 
