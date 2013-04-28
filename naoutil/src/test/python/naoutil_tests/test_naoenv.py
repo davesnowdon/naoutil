@@ -24,8 +24,11 @@ environment with an ALBroker so we just make the value of the proxy the name.
 We can't call proxy methods on this but we can tell the right proxy would have been created.
 '''
 def fake_add_proxy(self, longName):
+    if self.proxyAddr and self.proxyPort:
+        self.log('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
+    else:
         self.log('Creating proxy: ' + longName)
-        self.proxies[longName] = longName
+    self.proxies[longName] = longName
 
 class ResourcesPath(unittest.TestCase):
     def test_find_implicit_resources_dir(self):
@@ -62,6 +65,12 @@ class EnvironmentInitialization(unittest.TestCase):
                               "ALMotion" : MockMotion(), 
                               "ALTextToSpeech" : MockTextToSpeech() })
         self.assertIsNotNone(env)
+    
+    def test_create_with_ip_and_port(self):
+        env = make_environment(MockBox(), ipaddr="127.0.0.1", port=9559)
+        set_mock_add_proxy(env, fake_add_proxy)
+        self.assertIsNotNone(env)
+        self.assertIsNotNone(env.motion)
 
 class NonLocalizedProperties(unittest.TestCase):
     def setUp(self):
