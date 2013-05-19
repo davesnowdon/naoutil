@@ -25,10 +25,11 @@ We can't call proxy methods on this but we can tell the right proxy would have b
 '''
 def fake_add_proxy(self, longName):
     if self.proxyAddr and self.proxyPort:
-        self.log('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
+        self.log('Creating proxy: {name} at {proxy.proxyAddr}:{proxy.proxyPort}'.format(name=longName, proxy=self))
     else:
-        self.log('Creating proxy: ' + longName)
+        self.log('Creating proxy: {name}'.format(name=longName))
     self.proxies[longName] = longName
+
 
 class ResourcesPath(unittest.TestCase):
     def test_find_implicit_resources_dir(self):
