@@ -179,10 +179,10 @@ class NaoEnvironment(object):
 
     # invoke ALProxy to store the proxy we need
     def add_proxy(self, longName):
-        self.proxies[longName] = self.get_proxy(longName)
+        self.proxies[longName] = self.create_proxy(longName)
 
-    # invoke ALProxy to get the proxy we need
-    def get_proxy(self, longName):
+    # invoke ALProxy to create the proxy we need
+    def create_proxy(self, longName):
         if self.proxyAddr and self.proxyPort:
             self.logger.debug('Creating proxy: {name} at {proxy.proxyAddr}:{proxy.proxyPort}'.format(name=longName, proxy=self))
             return ALProxy(longName, self.proxyAddr, self.proxyPort)
