@@ -31,6 +31,8 @@ PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
                       'behaviourManager' : 'ALBehaviorManager',
                       'connectionManager' : 'ALConnectionManager',
                       'faceDetection' : 'ALFaceDetection',
+                      'faceTracker' : 'ALFaceTracker',
+                      'ballTracker' : 'ALRedBallTracker',
                       'infrared' : 'ALInfrared',
                       'leds' : 'ALLeds',
                       'memory' : 'ALMemory',
@@ -175,14 +177,18 @@ class NaoEnvironment(object):
             # not a valid short name or long name
             raise AttributeError
 
-    # invoke ALProxy to create the proxy we need
+    # invoke ALProxy to store the proxy we need
     def add_proxy(self, longName):
+        self.proxies[longName] = self.create_proxy(longName)
+
+    # invoke ALProxy to create the proxy we need
+    def create_proxy(self, longName):
         if self.proxyAddr and self.proxyPort:
             self.logger.debug('Creating proxy: {name} at {proxy.proxyAddr}:{proxy.proxyPort}'.format(name=longName, proxy=self))
-            self.proxies[longName] = ALProxy(longName, self.proxyAddr, self.proxyPort)
+            return ALProxy(longName, self.proxyAddr, self.proxyPort)
         else:
             self.logger.debug('Creating proxy: {name}'.format(name=longName))
-            self.proxies[longName] = ALProxy(longName)
+            return ALProxy(longName)
 
 '''
 Create environment object.
