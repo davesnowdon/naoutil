@@ -30,8 +30,8 @@ def _resolve_ip_port(nao_id=None, nao_port=None):
     else:
         nao_id = str(nao_id)
         
+    all_naos = avahi.find_all_naos()
     if nao_port is None:
-        all_naos = avahi.find_all_naos()
         if nao_id is not None:
             return _resolve_from_id(all_naos, nao_id)
         else:
