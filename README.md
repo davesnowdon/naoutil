@@ -203,13 +203,13 @@ First, you don't need to declare your ALModule in the globals of your script. Ne
 Second, you don't need to provide a module name. The wrapper will create it for you, based on the fully qualified name of your sub-class.
 
 <pre lang="python"><code>
-from noaoutil import ALModule
+from noaoutil.module import Module
 
-class MyModule(ALModule):
+class MyModule(Module):
     def __init__(self):
-        ALModule.__init__(self)
+        Module.__init__(self)
         # Or
-        ALModule.__init__(self, 'module_name')
+        Module.__init__(self, 'module_name')
         
 def myFunction()
     aModule = MyModule()
@@ -225,10 +225,10 @@ from naoutil import memory
 
 # Run inside a behaviour environment (ie. choregraphe box) or inside a self created broker.
 
-def myEventCallback(dataName, value, message):
-    print 'Event', dataName, value, message
+def my_event_callback(data_name, value, message):
+    print 'Event', data_name, value, message
 
-memory.subscribeToEvent('RightBumperPressed', myEventCallback)
+memory.subscribeToEvent('RightBumperPressed', my_event_callback)
 raw_input("Press ENTER to stop subscribing to RightBumperPressed\n")
 memory.unsubscribeToEvent('RightBumperPressed')
 </code></pre>
