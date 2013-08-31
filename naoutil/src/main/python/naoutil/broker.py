@@ -4,85 +4,125 @@ Created on April 05, 2013
 @author: AxelVoitier
 @license: GNU LGPL v3
 
-Python module allowing to create a ALBroker as if it was a contextmanager (use with the 'with' statement).
-It will also try to resolve automatically all IPs and ports of NaoQis we could connect to.
+Python module allowing to create a ALBroker as if it was a
+contextmanager (use with the 'with' statement).
+It will also try to resolve automatically all IPs and ports of NaoQis
+we could connect to.
 '''
 
 import socket
 from contextlib import contextmanager
-from naoqi import ALBroker
-from naoutil import avahi
 
-def getLocalIp(destAddr):
+from naoqi import ALBroker
+
+from naoutil import avahi
+        
+        
+def _resolve_ip_port(nao_id=None, nao_port=None):
     '''
-    Return the IP of the *net interface capable of reaching destAddr.
+    Return a tuple (ip, port) of detectable or probable NAO.
+    The suggested ID can be an IP address, a hostname like bobot.local,
+    or a robot name like bobot.
     '''
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((destAddr, 0))
-    ip = s.getsockname()[0]
-    s.close()
-    return ip
-    
-class Broker(ALBroker):
-    '''
-    Create a broker with the given name.
-    Automatically find out NAO IP. Set the broker to listen only on the IP that is on the same network than NAO.
-    You can specify brokerIp to listen to localhost only (127.0.0.1) or to everybody (0.0.0.0).
-    
-    When you are finished with your broker, call the shutdown() method on it.
-    '''
-    def __init__(self, brokerName, brokerIp=None, brokerPort=0, naoIp=None, naoPort=None):
-        # Resolve NAO ip/port
-        if naoIp is None:
-            naoPort = None # Ensure consistency. Do not support specifying only port.
+    if nao_id is None:
+        # Ensure consistency. Do not support specifying only port.
+        nao_port = None
+    else:
+        nao_id = str(nao_id)
+        
+    if nao_port is None:
+        all_naos = avahi.find_all_naos()
+        if nao_id is not None:
+            return _resolve_from_id(all_naos, nao_id)
         else:
-            naoIp = str(naoIp)
-        if naoPort is None:
-            allNaos = avahi.findAllNAOs()
-            if naoIp is not None: # A NAO address is given, but not the port. Find it.
-                for aNao in allNaos:
-                    if naoIp in aNao.values():
-                        naoPort = aNao['naoqi_port']
-                        break
-                if naoPort is None: # Can't find it in Avahi results
-                    naoPort = 9559 # Try default port
-            else: # Find the most likely NAO
-                for aNao in allNaos:
-                    if aNao['local']: # Prefer to connect to the local naoqi if there
-                        naoIp = aNao['ip_address']
-                        naoPort = aNao['naoqi_port']
-                        break
-                if naoIp is None: # No local NAO detected
-                    if allNaos: # Try to get the first NAO detected by Avahi
-                        naoIp = allNaos[0]['ip_address']
-                        naoPort = allNaos[0]['naoqi_port']
-                    else: # Fallback on nao.local/9559
-                        naoIp = 'nao.local'
-                        naoPort = 9559
-        else:
-            naoPort = int(naoPort)
-                    
-        # Information concerning our new python broker
-        if brokerIp is None:
-            brokerIp = getLocalIp(naoIp)
-      
-        ALBroker.__init__(self, brokerName, brokerIp, brokerPort, naoIp, naoPort)
+            return _find_probable_ip_port(all_naos)
+    else:
+        # Resolve the ID but discard the port given by Avahi.
+        nao_ip, _ = _resolve_from_id(all_naos, nao_id)
+        return nao_ip, int(nao_port) 
+    
+def _resolve_from_id(all_naos, nao_id):
+    '''
+    Return a tuple (ip, port) corresponding to a robot 'ID'.
+    The ID can be an IP address, a hostname like bobot.local,
+    or a robot name like bobot.
+    '''
+    for a_nao in all_naos:
+        if nao_id in a_nao.values():
+            return a_nao['ip_address'], a_nao['naoqi_port']
+    
+    # Can't find it in Avahi results.
+    # Try with the ID itself and the default port.
+    return nao_id, 9559
+    
+def _find_probable_ip_port(all_naos):
+    '''
+    Return a tuple (ip, port) likely to be an available NAO around.
+    Warning: can do wild guesses.
+    '''
+    # Prefer to connect to the local naoqi if there is one
+    for a_nao in all_naos:
+        if a_nao['local']:
+            return a_nao['ip_address'], a_nao['naoqi_port']
+    
+    # No local NAO detected
+    if all_naos: # Try to get the first NAO detected by Avahi
+        return all_naos[0]['ip_address'], all_naos[0]['naoqi_port']
+    else: # Fallback on nao.local/9559
+        return 'nao.local', 9559
+
+def _get_local_ip(dest_addr):
+    '''
+    Return the IP of the *net interface capable of reaching dest_addr.
+    '''
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.connect((dest_addr, 0))
+    ip_addr = sock.getsockname()[0]
+    sock.close()
+    return ip_addr
     
 @contextmanager
-def create(brokerName, brokerIp=None, brokerPort=0, naoIp=None, naoPort=None):
+def create(broker_name, broker_ip=None, broker_port=0,
+           nao_id=None, nao_port=None):
     '''
     Create a broker with the given name.
-    Automatically find out NAO IP. Set the broker to listen only on the IP that is on the same network than NAO.
-    You can specify brokerIp to listen to localhost only (127.0.0.1) or to everybody (0.0.0.0).
+    Automatically find out NAO IP. Set the broker to listen only on the
+    IP that is on the same network than NAO.
+    You can specify broker_ip to listen to localhost only (127.0.0.1)
+    or to everybody (0.0.0.0).
     
-    It acts as a context manager. Which means, use it with the 'with' statement. Example:
+    It acts as a context manager. Which means, use it with the 'with' statement.
+    
+    Example:
     
     with broker.create('MyBroker') as myBroker:
         print myBroker.getGlobalModuleList()
         raw_input("Press ENTER to terminate the broker")
     # Outside of the with, the broker has been shutdown.
     '''
-    broker = Broker(brokerName, brokerIp, brokerPort, naoIp, naoPort)
+    broker = Broker(broker_name, broker_ip, broker_port, nao_id, nao_port)
     yield broker
     broker.shutdown()
+    
+    
+class Broker(ALBroker):
+    '''
+    Create a broker with the given name.
+    Automatically find out NAO IP. Set the broker to listen only on the
+    IP that is on the same network than NAO.
+    You can specify broker_ip to listen to localhost only (127.0.0.1) or
+    to everybody (0.0.0.0).
+    
+    When you are finished with your broker, call the shutdown() method on it.
+    '''
+    def __init__(self, broker_name, broker_ip=None, broker_port=0,
+                 nao_id=None, nao_port=None):
+        nao_ip, nao_port = _resolve_ip_port(nao_id, nao_port)
+        
+        # Information concerning our new python broker
+        if broker_ip is None:
+            broker_ip = _get_local_ip(nao_ip)
+      
+        ALBroker.__init__(self, broker_name, broker_ip,
+                          broker_port, nao_ip, nao_port)
 

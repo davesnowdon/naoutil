@@ -174,26 +174,26 @@ myBroker.shutdown()
 
 You can also provide the same parameters the original ALBroker class has, except here they are optional (and named):
 
-* brokerIp: The IP on which the broker will listen. Be careful, listening only on 127.0.0.1 when your broker is not running on the robot will prevent you from subscribing to ALMemory events.
-* brokerPort: 0 let the broker find itself a free port.
-* naoIp: The IP or Bonjour/Avahi address of a NAO robot or a machine running a NaoQi.
-* naoPort: Port used by the NaoQi process.
+* broker_ip: The IP on which the broker will listen. Be careful, listening only on 127.0.0.1 when your broker is not running on the robot will prevent you from subscribing to ALMemory events.
+* broker_port: 0 let the broker find itself a free port.
+* nao_id: An "ID" corresponding to a NAO robot. It can be an IP address, or a Bonjour/Avahi address, or a hostname, or a robot name (case sensitive).
+* nao_port: Port used by the NaoQi process.
 
-If you don't provide one of this parameter, it will be auto-detected. This means you could for instance just give naoIp='nao.local'. It will resolve itself the naoPort, brokerIp and brokerPort.
+If you don't provide one of this parameter, it will be auto-detected. This means you could for instance just give nao_id='nao.local' or nao_id='nao'. It will resolve itself the nao_port, broker_ip and broker_port.
 
 
 The auto-detection algorithm uses Bonjour/Avahi through DBus to find available NaoQis. It should be fine in most cases (ie. having only one robot at home, or running a broker directly on the robot itself).
 The detection procedure goes as follow:
 
-* If a naoIp is provided but not a naoPort,
-  * If the naoIp correspond to an Avahi entry, get the naoPort.
-  * If there is no NaoQi with this IP address on Avahi, it uses the default port, '9559'.
-* If a naoIp is not provided,
+* If a nao_id is provided but not a nao_port,
+  * If the nao_id correspond to an Avahi entry, get the nao_port and resolve the IP of the robot.
+  * If there is no NaoQi with this ID on Avahi, it uses the default port, '9559', and the provided ID as a network address.
+* If a nao_id is not provided,
   * If Avahi returns a NaoQi running locally on the machine, uses it.
-  * Otherwise, get the first NaoQi Avahi found.
+  * Otherwise, get the first NaoQi Avahi can find.
   * If no NaoQi can be found by Avahi, use the default 'nao.local' IP address and '9559' port.
-* If no brokerIp is given, try to find the IP of the network card routing to the detected naoIp.
-* If no brokerPort is given, use 0 (let the broker find itself a free port).
+* If no broker_ip is given, try to find the IP of the network card routing to the detected nao IP.
+* If no broker_port is given, use 0 (let the broker find itself a free port).
 
 ## ALModule
 A wrapper around ALModule is provided in the naoutil package. It adds two significant features.
@@ -209,7 +209,7 @@ class MyModule(ALModule):
     def __init__(self):
         ALModule.__init__(self)
         # Or
-        ALModule.__init__(self, 'moduleName')
+        ALModule.__init__(self, 'module_name')
         
 def myFunction()
     aModule = MyModule()
