@@ -125,4 +125,10 @@ class Broker(ALBroker):
       
         ALBroker.__init__(self, broker_name, broker_ip,
                           broker_port, nao_ip, nao_port)
+                          
+        self.broker_name = broker_name
+        self.broker_ip = broker_ip
+        self.broker_port = broker_port
+        self.nao_id = nao_id
+        self.nao_port = nao_port
 
