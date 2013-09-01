@@ -61,15 +61,16 @@ def find_class(fqcn):
         
     raise TypeError("Can't find class {}".format(fqcn))
 
-'''
-Decorator for a class to transform it as a singleton.
-'''
 def singleton(cls):
+    '''
+    Decorator for a class to transform it as a singleton.
+    '''
     instances = weakref.WeakValueDictionary()
     def getinstance(*args):
         '''
         Lookup for the class in the weak dict and return its singleton instance.
         Called when creating an object.
+        Do not recall __init__ with the new parameters.
         '''
         try:
             return instances[cls]
