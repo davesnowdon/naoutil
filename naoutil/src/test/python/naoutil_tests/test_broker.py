@@ -276,3 +276,6 @@ class CreateBroker(BaseResolveIpPort):
             self.assertEqual(broker_args[4], 7777)
         self.assertTrue(my_broker.shutdown_called)
 
+if __name__ == '__main__':
+    unittest.main()
+

@@ -107,3 +107,6 @@ class MemoryCallback(unittest.TestCase):
         self.assertIsNone(events['data1'][3])
         
         memory.unsubscribe_to_micro_event('data1')
+
+if __name__ == '__main__':
+    unittest.main()
