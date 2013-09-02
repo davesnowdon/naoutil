@@ -130,10 +130,12 @@ class Broker(ALBroker):
                              are respectively replaced by broker_ip,
                              broker_port, nao_id and nao_port''',
                              DeprecationWarning)
-            broker_ip = kwargs.get('brokerIp', broker_ip)
-            broker_port = kwargs.get('brokerPort', broker_port)
-            nao_id = kwargs.get('naoIp', nao_id)
-            nao_port = kwargs.get('naoPort', nao_port)
+            broker_ip = kwargs.pop('brokerIp', broker_ip)
+            broker_port = kwargs.pop('brokerPort', broker_port)
+            nao_id = kwargs.pop('naoIp', nao_id)
+            nao_port = kwargs.pop('naoPort', nao_port)
+        if kwargs:
+            raise TypeError('Unexpected arguments for Broker(): %s' % ', '.join(kwargs.keys()))
                  
         nao_ip, nao_port = _resolve_ip_port(nao_id, nao_port)
         
