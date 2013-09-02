@@ -102,9 +102,15 @@ class _AvahiNAOFinder(object):
         self.gloop = gobject.MainLoop()
         
     def run(self):
+        '''
+        Start the main loop.
+        '''
         self.gloop.run()
         
     def quit(self):
+        '''
+        Quit the main loop.
+        '''
         self.gloop.quit()
     
     def item_new_cb(self, interface, protocol, name, stype, domain, flags):

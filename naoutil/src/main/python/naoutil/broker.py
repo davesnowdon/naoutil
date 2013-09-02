@@ -107,7 +107,8 @@ def create(broker_name, broker_ip=None, broker_port=0,
         raw_input("Press ENTER to terminate the broker")
     # Outside of the with, the broker has been shutdown.
     '''
-    broker = Broker(broker_name, broker_ip, broker_port, nao_id, nao_port, **kwargs)
+    broker = Broker(broker_name, broker_ip, broker_port,
+                    nao_id, nao_port, **kwargs)
     yield broker
     broker.shutdown()
     
@@ -135,7 +136,8 @@ class Broker(ALBroker):
             nao_id = kwargs.pop('naoIp', nao_id)
             nao_port = kwargs.pop('naoPort', nao_port)
         if kwargs:
-            raise TypeError('Unexpected arguments for Broker(): %s' % ', '.join(kwargs.keys()))
+            raise TypeError('Unexpected arguments for Broker(): %s'
+                            % ', '.join(kwargs.keys()))
                  
         nao_ip, nao_port = _resolve_ip_port(nao_id, nao_port)
         
