@@ -24,8 +24,17 @@ from dbus.mainloop.glib import DBusGMainLoop
 
 def find_all_naos(ip_v6=False):
     '''
-    Returns IP, port and other information about NaoQis
-    available on the local network in a list.
+    Returns IP, port and other information about NaoQis (real robot or NaoQi
+    running on a desktop computer) available on the local network in a list.
+    
+    Each entry of the list is a dictionary with the following keys:
+    - 'robot_name': The name of the robot (string).
+    - 'host_name': The hostname of the robot (string).
+    - 'ip_address': The IP address corresponding to the hostname (string).
+    - 'naoqi_port': The port used by NaoQi (int).
+    - 'local': If NaoQi run on the same machine that us or not (boolean).
+    
+    The ip_v6 argument is for the future.
     '''
     nao_finder = _AvahiNAOFinder(ip_v6)
     nao_finder.run()

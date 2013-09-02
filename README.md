@@ -242,3 +242,21 @@ Available methods are:
   * subscribeToMicroEvent(dataName, callback, cbMessage='')
   * unsubscribeToMicroEvent(dataName)
 
+## Finding NAO robots on the network
+You can get a list of NAO robots or NaoQi running on computers through Bonjour/Avahi.
+
+<pre lang="python"><code>
+from pprint import pprint
+from naoutil import avahi
+
+list_of_robots = avahi.find_all_naos()
+pprint(list_of_robots)
+</code></pre>
+
+Each entry of the list is a dictionary with the following keys:
+
+* robot_name: The name of the robot (string).
+* host_name: The hostname of the robot (string).
+* ip_address: The IP address corresponding to the hostname (string).
+* naoqi_port: The port used by NaoQi (int).
+* local: If NaoQi run on the same machine that us or not (boolean).
