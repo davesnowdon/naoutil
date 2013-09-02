@@ -16,8 +16,10 @@ from contextlib import contextmanager
 
 from naoqi import ALBroker
 
-from naoutil import avahi
-
+try:
+    from naoutil import avahi
+except ImportError:
+    warnings.warn('DBus/Avahi is unavailable (Windows?).', RuntimeWarning) 
 
 # Since Python 2.7 DeprecationWarning are hidden.
 # Force to show them as we throw some. Sorry for the intrusion.
