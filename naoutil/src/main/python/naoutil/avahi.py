@@ -7,9 +7,14 @@ Created on April 05, 2013
 Python module to access Avahi through DBus.
 '''
 
-import dbus
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
+import warnings
+
+try:
+    import dbus
+    import gobject
+    from dbus.mainloop.glib import DBusGMainLoop
+except ImportError:
+    warnings.warn('DBus/Avahi is unavailable (Windows?).', RuntimeWarning) 
 
 # Use the following sources:
 # http://avahi.org/wiki/PythonBrowseExample
@@ -36,11 +41,21 @@ def find_all_naos(ip_v6=False):
     
     The ip_v6 argument is for the future.
     '''
-    nao_finder = _AvahiNAOFinder(ip_v6)
-    nao_finder.run()
-    return nao_finder.services_found
+    try:
+        nao_finder = _AvahiNAOFinder(ip_v6)
+        nao_finder.run()
+        return nao_finder.services_found
+    except NameError:
+        # On Windows, return a very default nao.local.
+        return [{
+            'robot_name': 'nao',
+            'host_name': 'nao.local',
+            'ip_address': 'nao.local',
+            'naoqi_port': 9559,
+            'local': False
+        }]
     
-class _AvahiNAOFinder(gobject.MainLoop):
+class _AvahiNAOFinder(object):
     '''
     Class used to query Avahi about NAO on the network.
     '''
@@ -57,8 +72,6 @@ class _AvahiNAOFinder(gobject.MainLoop):
     AVAHI_LOOKUP_RESULT_LOCAL = 8
 
     def __init__(self, ip_v6=False):
-        gobject.MainLoop.__init__(self)
-        
         self.nb_services_found = 0
         self.services_found = []
     
@@ -85,6 +98,14 @@ class _AvahiNAOFinder(gobject.MainLoop):
             self.item_new_cb(interface, protocol, name, stype, domain, flags)
 
         sbrowser.connect_to_signal("ItemNew", item_new_cb_wrapper)
+        
+        self.gloop = gobject.MainLoop()
+        
+    def run(self):
+        self.gloop.run()
+        
+    def quit(self):
+        self.gloop.quit()
     
     def item_new_cb(self, interface, protocol, name, stype, domain, flags):
         '''

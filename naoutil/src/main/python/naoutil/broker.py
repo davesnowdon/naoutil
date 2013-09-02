@@ -10,16 +10,13 @@ It will also try to resolve automatically all IPs and ports of NaoQis
 we could connect to.
 '''
 
-import socket
 import warnings
+import socket
 from contextlib import contextmanager
 
 from naoqi import ALBroker
 
-try:
-    from naoutil import avahi
-except ImportError:
-    warnings.warn('DBus/Avahi is unavailable (Windows?).', RuntimeWarning) 
+from naoutil import avahi
 
 # Since Python 2.7 DeprecationWarning are hidden.
 # Force to show them as we throw some. Sorry for the intrusion.
@@ -40,6 +37,7 @@ def _resolve_ip_port(nao_id=None, nao_port=None):
         nao_id = str(nao_id)
         
     all_naos = avahi.find_all_naos()
+        
     if nao_port is None:
         if nao_id is not None:
             return _resolve_from_id(all_naos, nao_id)
