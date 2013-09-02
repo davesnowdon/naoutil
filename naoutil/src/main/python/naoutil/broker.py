@@ -11,11 +11,18 @@ we could connect to.
 '''
 
 import socket
+import warnings
 from contextlib import contextmanager
 
 from naoqi import ALBroker
 
 from naoutil import avahi
+
+
+# Since Python 2.7 DeprecationWarning are hidden.
+# Force to show them as we throw some. Sorry for the intrusion.
+# It could be handled by logging.captureWarnings(True) though.
+warnings.simplefilter('default', DeprecationWarning)
         
         
 def _resolve_ip_port(nao_id=None, nao_port=None):
@@ -83,7 +90,7 @@ def _get_local_ip(dest_addr):
     
 @contextmanager
 def create(broker_name, broker_ip=None, broker_port=0,
-           nao_id=None, nao_port=None):
+           nao_id=None, nao_port=None, **kwargs):
     '''
     Create a broker with the given name.
     Automatically find out NAO IP. Set the broker to listen only on the
@@ -100,7 +107,7 @@ def create(broker_name, broker_ip=None, broker_port=0,
         raw_input("Press ENTER to terminate the broker")
     # Outside of the with, the broker has been shutdown.
     '''
-    broker = Broker(broker_name, broker_ip, broker_port, nao_id, nao_port)
+    broker = Broker(broker_name, broker_ip, broker_port, nao_id, nao_port, **kwargs)
     yield broker
     broker.shutdown()
     
@@ -116,7 +123,18 @@ class Broker(ALBroker):
     When you are finished with your broker, call the shutdown() method on it.
     '''
     def __init__(self, broker_name, broker_ip=None, broker_port=0,
-                 nao_id=None, nao_port=None):
+                 nao_id=None, nao_port=None, **kwargs):
+        if any(x in kwargs for x in
+                           ['brokerIp', 'brokerPort', 'naoIp', 'naoPort']):
+            warnings.warn('''brokerIp, brokerPort, naoIp and naoPort arguments
+                             are respectively replaced by broker_ip,
+                             broker_port, nao_id and nao_port''',
+                             DeprecationWarning)
+            broker_ip = kwargs.get('brokerIp', broker_ip)
+            broker_port = kwargs.get('brokerPort', broker_port)
+            nao_id = kwargs.get('naoIp', nao_id)
+            nao_port = kwargs.get('naoPort', nao_port)
+                 
         nao_ip, nao_port = _resolve_ip_port(nao_id, nao_port)
         
         # Information concerning our new python broker
