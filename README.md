@@ -185,7 +185,7 @@ It is STRONGLY adviced to users of naoutil to not give any nao_id/nao_port argum
 
 If your script calling a naoutil.broker is executed on a robot, it will connect to the local NaoQi.
 
-If your script is executed an a computer or mobile device, and the end-user has only one robot, it will find it.
+If your script is executed on a computer or mobile device, and the end-user has only one robot, it will find it.
 
 And in case an end-user has several robots, this person can set the FAVORITE_NAO environment variable to guide naoutil.broker module into finding its prefered NAO robot.
 
@@ -196,8 +196,8 @@ The detection procedure goes as follow:
   * If the nao_id correspond to an Avahi entry, get the nao_port and resolve the IP of the robot.
   * If there is no NaoQi with this ID on Avahi, it uses the default port, '9559', and the provided ID as a network address.
 * If a nao_id is not provided,
-  * If the environment variable FAVORITE_NAO is set (with something similar to a nao_id argument) and there is a corresponding robot available on the network, uses it.
-  * Otherwise, if Avahi returns a NaoQi running locally on the machine, uses it.
+  * If the environment variable FAVORITE_NAO is set (with something similar to a nao_id argument) and there is a corresponding robot available on the network, use it.
+  * Otherwise, if Avahi returns a NaoQi running locally on the machine, use it.
   * Otherwise, get the first NaoQi Avahi can find.
   * If no NaoQi can be found by Avahi, use the default 'nao.local' IP address and '9559' port.
 * If no broker_ip is given, try to find the IP of the network card routing to the detected nao IP.
@@ -267,5 +267,5 @@ Each entry of the list is a dictionary with the following keys:
 * host_name: The hostname of the robot (string).
 * ip_address: The IP address corresponding to the hostname (string).
 * naoqi_port: The port used by NaoQi (int).
-* local: If NaoQi run on the same machine that us or not (boolean).
+* local: If NaoQi run on the same machine than us or not (boolean).
 * favorite: If the environment variable FAVORITE_NAO correspond to this robot (boolean).
