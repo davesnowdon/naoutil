@@ -181,15 +181,23 @@ You can also provide the same parameters the original ALBroker class has, except
 
 If you don't provide one of this parameter, it will be auto-detected. This means you could for instance just give nao_id='nao.local' or nao_id='nao'. It will resolve itself the nao_port, broker_ip and broker_port.
 
+It is STRONGLY adviced to users of naoutil to not give any nao_id/nao_port arguments. It is better to let naoutil.broker module find the right NAO. Unless you have a user interface to let the end-user select its NAO robot in a list (see later, Finding NAO robots on the network).
 
-The auto-detection algorithm uses Bonjour/Avahi through DBus to find available NaoQis. It should be fine in most cases (ie. having only one robot at home, or running a broker directly on the robot itself).
+If your script calling a naoutil.broker is executed on a robot, it will connect to the local NaoQi.
+
+If your script is executed an a computer or mobile device, and the end-user has only one robot, it will find it.
+
+And in case an end-user has several robots, this person can set the FAVORITE_NAO environment variable to guide naoutil.broker module into finding its prefered NAO robot.
+
+The auto-detection algorithm uses Bonjour/Avahi through DBus to find available NaoQis.
 The detection procedure goes as follow:
 
 * If a nao_id is provided but not a nao_port,
   * If the nao_id correspond to an Avahi entry, get the nao_port and resolve the IP of the robot.
   * If there is no NaoQi with this ID on Avahi, it uses the default port, '9559', and the provided ID as a network address.
 * If a nao_id is not provided,
-  * If Avahi returns a NaoQi running locally on the machine, uses it.
+  * If the environment variable FAVORITE_NAO is set (with something similar to a nao_id argument) and there is a corresponding robot available on the network, uses it.
+  * Otherwise, if Avahi returns a NaoQi running locally on the machine, uses it.
   * Otherwise, get the first NaoQi Avahi can find.
   * If no NaoQi can be found by Avahi, use the default 'nao.local' IP address and '9559' port.
 * If no broker_ip is given, try to find the IP of the network card routing to the detected nao IP.
@@ -260,3 +268,4 @@ Each entry of the list is a dictionary with the following keys:
 * ip_address: The IP address corresponding to the hostname (string).
 * naoqi_port: The port used by NaoQi (int).
 * local: If NaoQi run on the same machine that us or not (boolean).
+* favorite: If the environment variable FAVORITE_NAO correspond to this robot (boolean).

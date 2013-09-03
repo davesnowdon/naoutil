@@ -42,7 +42,7 @@ def _resolve_ip_port(nao_id=None, nao_port=None):
         if nao_id is not None:
             return _resolve_from_id(all_naos, nao_id)
         else:
-            return _find_probable_ip_port(all_naos)
+            return _suggest_ip_port(all_naos)
     else:
         # Resolve the ID but discard the port given by Avahi.
         nao_ip, _ = _resolve_from_id(all_naos, nao_id)
@@ -54,29 +54,42 @@ def _resolve_from_id(all_naos, nao_id):
     The ID can be an IP address, a hostname like bobot.local,
     or a robot name like bobot.
     '''
-    for a_nao in all_naos:
-        if nao_id in a_nao.values():
-            return a_nao['ip_address'], a_nao['naoqi_port']
+    nao_found = _filter_naos(all_naos, lambda a_nao: nao_id in a_nao.values())
+    return nao_found if nao_found else (nao_id, 9559)
     
-    # Can't find it in Avahi results.
-    # Try with the ID itself and the default port.
-    return nao_id, 9559
-    
-def _find_probable_ip_port(all_naos):
+def _suggest_ip_port(all_naos):
     '''
     Return a tuple (ip, port) likely to be an available NAO around.
     Warning: can do wild guesses.
     '''
-    # Prefer to connect to the local naoqi if there is one
-    for a_nao in all_naos:
-        if a_nao['local']:
-            return a_nao['ip_address'], a_nao['naoqi_port']
+    # Prefer to connect to the favorite naoqi if there is one
+    favorite = _filter_naos(all_naos, lambda a_nao: a_nao['favorite'])
+    if favorite:
+        return favorite
+        
+    # Otherwise to the local naoqi if there is one
+    local_ = _filter_naos(all_naos, lambda a_nao: a_nao['local'])
+    if local_:
+        return local_
     
-    # No local NAO detected
-    if all_naos: # Try to get the first NAO detected by Avahi
+    # No favorite or local NAO detected.
+    # Try to get the first NAO detected by Avahi.
+    if all_naos:
         return all_naos[0]['ip_address'], all_naos[0]['naoqi_port']
     else: # Fallback on nao.local/9559
         return 'nao.local', 9559
+        
+def _filter_naos(all_naos, func):
+    '''
+    Filter the list of all_naos based in the func function.
+    func take one argument, a_nao. And return True if filtered in. And False if
+    not.
+    This function returns the first NAO (ip, port) tuple in the list of filtered
+    NAOs. If none correspond, None is returned.
+    '''
+    filtered = [a_nao for a_nao in all_naos if func(a_nao)]
+    if filtered:
+        return filtered[0]['ip_address'], filtered[0]['naoqi_port']
 
 def _get_local_ip(dest_addr):
     '''

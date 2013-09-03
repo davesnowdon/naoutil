@@ -7,6 +7,7 @@ Created on April 05, 2013
 Python module to access Avahi through DBus.
 '''
 
+import os
 import warnings
 
 try:
@@ -38,6 +39,8 @@ def find_all_naos(ip_v6=False):
     - 'ip_address': The IP address corresponding to the hostname (string).
     - 'naoqi_port': The port used by NaoQi (int).
     - 'local': If NaoQi run on the same machine that us or not (boolean).
+    - 'favorite': If the environment variable FAVORITE_NAO correspond to this
+    robot (boolean)
     
     The ip_v6 argument is for the future.
     '''
@@ -47,13 +50,15 @@ def find_all_naos(ip_v6=False):
         return nao_finder.services_found
     except NameError:
         # On Windows, return a very default nao.local.
-        return [{
+        entry = {
             'robot_name': 'nao',
             'host_name': 'nao.local',
             'ip_address': 'nao.local',
             'naoqi_port': 9559,
             'local': False
-        }]
+        }
+        entry['favorite'] = os.environ.get('FAVORITE_NAO') in entry.values()
+        return [entry]
     
 class _AvahiNAOFinder(object):
     '''
@@ -142,14 +147,16 @@ class _AvahiNAOFinder(object):
         #print 'service resolved', args[5]
         labels = ['interface', 'protocol', 'name', 'type', 'domain', 'host',
                   'aprotocol', 'address', 'port', 'txt', 'flags']
-        self.services_found.append({
+        entry = {
             'robot_name': str(args[labels.index('name')]),
             'host_name': str(args[labels.index('host')]),
             'ip_address': str(args[labels.index('address')]),
             'naoqi_port': int(args[labels.index('port')]),
             'local': bool(args[labels.index('flags')] &
                           self.AVAHI_LOOKUP_RESULT_LOCAL)
-        })
+        }
+        entry['favorite'] = os.environ.get('FAVORITE_NAO') in entry.values()
+        self.services_found.append(entry)
         self.nb_services_found -= 1
         if self.nb_services_found == 0:
             self.quit()

@@ -29,57 +29,68 @@ def mock_avahi_find_all_naos(ip_v6=False):
               'ip_address': '138.37.60.137',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'Pepper'},
+              'robot_name': 'Pepper',
+              'favorite': False},
              {'host_name': 'naoFernando.local',
               'ip_address': '138.37.60.4',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'naoFernando'},
+              'robot_name': 'naoFernando',
+              'favorite': False},
              {'host_name': 'MacDave.local',
               'ip_address': '138.37.60.166',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'MacDave'},
+              'robot_name': 'MacDave',
+              'favorite': False},
              {'host_name': 'nao.local',
               'ip_address': '138.37.60.85',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'nao'},
+              'robot_name': 'nao',
+              'favorite': False},
              {'host_name': 'MBP15.local',
               'ip_address': '138.37.60.162',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'MBP15'},
+              'robot_name': 'MBP15',
+              'favorite': False},
              {'host_name': 'mydell2.local',
               'ip_address': '138.37.60.170',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'mydell2'},
+              'robot_name': 'mydell2',
+              'favorite': False},
              {'host_name': 'ALD-XXXX-LA.local',
               'ip_address': '138.37.60.160',
               'local': False,
               'naoqi_port': 57074,
-              'robot_name': 'ALD-XXXX-LA'},
+              'robot_name': 'ALD-XXXX-LA',
+              'favorite': False},
              {'host_name': 'Xor.local',
               'ip_address': '138.37.60.59',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'Xor'},
+              'robot_name': 'Xor',
+              'favorite': False},
              {'host_name': 'Vanilo.local',
               'ip_address': '138.37.60.116',
               'local': False,
               'naoqi_port': 9559,
-              'robot_name': 'Vanilo'},
+              'robot_name': 'Vanilo',
+              'favorite': False},
              {'host_name': 'zirup.local',
               'ip_address': '138.37.60.66',
               'local': True,
               'naoqi_port': 9559,
-              'robot_name': 'zirup'},
+              'robot_name': 'zirup',
+              'favorite': False},
              {'host_name': 'zirup.local',
               'ip_address': '169.254.95.24',
               'local': True,
               'naoqi_port': 9559,
-              'robot_name': 'zirup'}]
+              'robot_name': 'zirup',
+              'favorite': False}]
 
 class BaseResolveIpPort(unittest.TestCase):
     @classmethod
@@ -90,36 +101,48 @@ class BaseResolveIpPort(unittest.TestCase):
                                    'ip_address': '138.37.60.66',
                                    'local': True,
                                    'naoqi_port': 9559,
-                                   'robot_name': 'zirup'}
+                                   'robot_name': 'zirup',
+                                   'favorite': False}
         # Used in test_unusual_port_with_id, test_unusual_port_with_id_and_port, test_id_ip_addr
         cls.fixture_unusual_port_robot = {'host_name': 'ALD-XXXX-LA.local',
                                           'ip_address': '138.37.60.160',
                                           'local': False,
                                           'naoqi_port': 57074,
-                                          'robot_name': 'ALD-XXXX-LA'}
+                                          'robot_name': 'ALD-XXXX-LA',
+                                          'favorite': False}
         cls.fixture_nao_local_robot = {'host_name': 'nao.local',
                                        'ip_address': '138.37.60.85',
                                        'local': False,
                                        'naoqi_port': 9559,
-                                       'robot_name': 'nao'}
+                                       'robot_name': 'nao',
+                                       'favorite': False}
         # Used in test_unusual_port_forcing_port
         cls.fixture_nao_local_fake_port_robot = {'host_name': 'nao.local',
                                                  'ip_address': '138.37.60.85',
                                                  'local': False,
                                                  'naoqi_port': 7777, # Not like this in the dataset, on purpose
-                                                 'robot_name': 'nao'}
+                                                 'robot_name': 'nao',
+                                                 'favorite': False}
         # Used in test_default_params_first, test_id_host_name, test_id_robot_name
         cls.fixture_first_robot = {'host_name': 'Pepper.local',
                                    'ip_address': '138.37.60.137',
                                    'local': False,
                                    'naoqi_port': 9559,
-                                   'robot_name': 'Pepper'}
+                                   'robot_name': 'Pepper',
+                                   'favorite': False}
         # Used in test_default_when_nothing
         cls.fixture_default_nao_local_robot = {'ip_address': 'nao.local', # Not in the dataset
                                                'naoqi_port': 9559}
         # Used in test_unknown_id
         cls.fixture_unknown_robot = {'ip_address': 'unknown', # Not in the dataset
                                      'naoqi_port': 9559}
+        # Used in ResolveIpPortWithFavorite
+        cls.fixture_favorite_robot = {'host_name': 'mydell2.local',
+                                      'ip_address': '138.37.60.170',
+                                      'local': False,
+                                      'naoqi_port': 9559,
+                                      'robot_name': 'mydell2',
+                                      'favorite': True}
         
     @classmethod
     def tearDownClass(cls):
@@ -190,6 +213,19 @@ class ResolveIpPortNoLocal(BaseResolveIpPort):
     def tearDown(self):
         avahi.find_all_naos = mock_avahi_find_all_naos
         
+class ResolveIpPortWithFavorite(BaseResolveIpPort):
+    def setUp(self):
+        all_naos = mock_avahi_find_all_naos()
+        all_naos[5]['favorite'] = True
+        avahi.find_all_naos = lambda ip_v6=False: all_naos
+        
+    def test_default_params_favorite(self):
+        ip_port = broker._resolve_ip_port()
+        self.compare_to_fixture(ip_port, self.fixture_favorite_robot, 'We expect the favorite robot.')
+        
+    def tearDown(self):
+        avahi.find_all_naos = mock_avahi_find_all_naos
+        
 class GetLocalIp(unittest.TestCase):
     def test_localhost(self):
         local_ip = broker._get_local_ip('localhost')
@@ -209,7 +245,7 @@ class CreateBroker(BaseResolveIpPort):
         naoqi.ALBroker = FakeBroker
         reload(broker)
         BaseResolveIpPort.setUpClass()
-        avahi.find_all_naos = lambda ip_v6=False: [{'host_name': 'localhost', 'ip_address': 'localhost', 'naoqi_port': 7777, 'local': True}]
+        avahi.find_all_naos = lambda ip_v6=False: [{'host_name': 'localhost', 'ip_address': 'localhost', 'naoqi_port': 7777, 'local': True, 'favorite': False}]
         
     @classmethod
     def tearDownClass(cls):
