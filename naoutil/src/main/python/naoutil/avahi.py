@@ -8,6 +8,7 @@ Python module to access Avahi through DBus.
 '''
 
 import os
+import time
 import warnings
 
 try:
@@ -75,6 +76,8 @@ class _AvahiNAOFinder(object):
     AVAHI_IF_UNSPEC = -1
     AVAHI_PROTO_UNSPEC, AVAHI_PROTO_INET, AVAHI_PROTO_INET6  = -1, 0, 1
     AVAHI_LOOKUP_RESULT_LOCAL = 8
+    
+    TIMEOUT = 30
 
     def __init__(self, ip_v6=False):
         self.nb_services_found = 0
@@ -106,10 +109,21 @@ class _AvahiNAOFinder(object):
         
         self.gloop = gobject.MainLoop()
         
+        self.timeout_time = time.time() + self.TIMEOUT
+        def timeout(*args):
+            '''Callback called by Avahi every second. Quit when timeout.'''
+            if time.time() >= self.timeout_time:
+                self.quit()
+                return False
+            return True
+            
+        gobject.timeout_add(1000, timeout)
+        
     def run(self):
         '''
         Start the main loop.
         '''
+        self.timeout_time = time.time() + self.TIMEOUT
         self.gloop.run()
         
     def quit(self):
@@ -123,6 +137,7 @@ class _AvahiNAOFinder(object):
         Callback indirectly called by Avahi for every new item corresponding
         to our query for _naoqi._tcp.
         '''
+        self.timeout_time = time.time() + self.TIMEOUT
         self.nb_services_found += 1
         
         def service_resolved_cb_wrapper(*args):
@@ -144,6 +159,7 @@ class _AvahiNAOFinder(object):
         Callback indirectly called by Avahi when resolving a service
         we found in item_new_cb.
         '''
+        self.timeout_time = time.time() + self.TIMEOUT
         #print 'service resolved', args[5]
         labels = ['interface', 'protocol', 'name', 'type', 'domain', 'host',
                   'aprotocol', 'address', 'port', 'txt', 'flags']
