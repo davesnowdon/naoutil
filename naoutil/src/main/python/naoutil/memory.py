@@ -26,7 +26,7 @@ class _SubscriberModule(Module):
         self.memory = ALProxy('ALMemory')
         self.data_name_to_micro_event_cb = {}
         self.data_name_to_event_cb = {}
-        
+
     # Event
     def subscribe_to_event(self, data_name, callback):
         '''
@@ -34,8 +34,8 @@ class _SubscriberModule(Module):
         Keep trace of the (data_name, callback) association.
         '''
         self.data_name_to_event_cb[data_name] = callback
-        self.memory.subscribeToEvent(data_name, self.module_name, '_event_cb')
-        
+        self.memory.subscribeToEvent(data_name, self.module_name, 'event_cb')
+
     def unsubscribe_to_event(self, data_name):
         '''
         Relay the unsubscription to ALMemory.
@@ -44,15 +44,15 @@ class _SubscriberModule(Module):
         if data_name in self.data_name_to_event_cb:
             self.memory.unsubscribeToEvent(data_name, self.module_name)
             del self.data_name_to_event_cb[data_name]
-        
-    def _event_cb(self, data_name, value, message):
+
+    def event_cb(self, data_name, value, message):
         '''
         Callback called by ALMemory when a value change on one of the
         subscribed data_name.
         Relay to user callback.
         '''
         self.data_name_to_event_cb[data_name](data_name, value, message)
-        
+
     # Micro-event
     def subscribe_to_micro_event(self, data_name, callback, cb_message):
         '''
@@ -61,8 +61,8 @@ class _SubscriberModule(Module):
         '''
         self.data_name_to_micro_event_cb[data_name] = callback
         self.memory.subscribeToMicroEvent(data_name, self.module_name,
-                                             cb_message, '_micro_event_cb')
-        
+                                             cb_message, 'micro_event_cb')
+
     def unsubscribe_to_micro_event(self, data_name):
         '''
         Relay the unsubscription to ALMemory.
@@ -71,29 +71,29 @@ class _SubscriberModule(Module):
         if data_name in self.data_name_to_micro_event_cb:
             self.memory.unsubscribeToMicroEvent(data_name, self.module_name)
             del self.data_name_to_micro_event_cb[data_name]
-        
-    def _micro_event_cb(self, data_name, value, message):
+
+    def micro_event_cb(self, data_name, value, message):
         '''
         Callback called by ALMemory when a value change on one of the
         subscribed data_name.
         Relay to user callback.
         '''
         self.data_name_to_micro_event_cb[data_name](data_name, value, message)
-        
+
 def subscribe_to_event(data_name, callback):
     '''
     Subscribe to an event.
     '''
     _SubscriberModule().subscribe_to_event(data_name, callback)
 subscribeToEvent = subscribe_to_event
-        
+
 def unsubscribe_to_event(data_name):
     '''
     Unsubscribe to an event.
     '''
     _SubscriberModule().unsubscribe_to_event(data_name)
 unsubscribeToEvent = unsubscribe_to_event
-        
+
 def subscribe_to_micro_event(data_name, callback, cb_message=''):
     '''
     Subscribe to a micro-event.
@@ -101,7 +101,7 @@ def subscribe_to_micro_event(data_name, callback, cb_message=''):
     _SubscriberModule().subscribe_to_micro_event(data_name, callback,
                                                  cb_message)
 subscribeToMicroEvent = subscribe_to_micro_event
-        
+
 def unsubscribe_to_micro_event(data_name):
     '''
     Unsubscribe to an event.
