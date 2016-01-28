@@ -24,13 +24,15 @@ DEFAULT_DATA_DIR_NAME = "data"
 The short names are the ones used to generate python properties, so you can use env.tts instead of
 env.ALTextToSpeech
 '''
-PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
+PROXY_SHORT_NAMES = { 'animatedSpeech': 'ALAnimatedSpeech',
+                      'audioDevice' : 'ALAudioDevice',
                       'audioLocalisation' : 'ALAudioSourceLocalisation',
                       'audioPlayer' : 'ALAudioPlayer',
                       'audioRecorder' : 'ALAudioRecoder',
                       'alife' : 'ALAutonomousLife',
                       'behaviourManager' : 'ALBehaviorManager',
                       'connectionManager' : 'ALConnectionManager',
+                      'dialog' : 'ALDialog',
                       'faceDetection' : 'ALFaceDetection',
                       'faceTracker' : 'ALFaceTracker',
                       'ballTracker' : 'ALRedBallTracker',
